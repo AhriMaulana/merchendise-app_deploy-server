@@ -18,7 +18,7 @@ exports.addItem = async (req, res) => {
             namabarang,
             hargabeli,
             hargajual,
-            stock
+            stock,
         })
         res.send({
             status: "success",
