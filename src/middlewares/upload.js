@@ -1,0 +1,62 @@
+// import package here
+const multer = require('multer')
+
+exports.uploadFile = (imageFile) => {
+    // code here
+    const storage = multer.diskStorage({
+        destination: function (req, file, cb) {
+            cb(null, "uploads")
+        },
+        filename: function (req, file, cb) {
+            cb(null, Date.now() + '-' + file.originalname.replace(/\s/g, ""))
+        }
+    })
+
+    const fileFilter = function (req, file, cb) {
+        // "image.pdf"
+        // <input type="file">
+        if (file.fieldname === imageFile) {
+            if (!file.originalname.match(/\.(jpg|JPG|jpeg|JPEG|png|PNG)$/)) {
+                req.fileValidationError = {
+                    message: "Only image files are allowed!"
+                }
+                return cb(new Error("Only image files are allowed!"), false)
+            }
+        }
+        cb(null, true)
+    }
+
+    
+    const upload = multer({
+        storage,
+        fileFilter,
+        limits: {
+            fileSize: 100 * 1000
+        }
+    }).single(imageFile)
+
+    return (req, res, next) => {
+        upload(req, res, function (err) {
+            if (req.fileValidationError) {
+                return res.status(400).send(req.fileValidationError)
+            }
+
+            if (!req.file && !err) {
+                return res.status(400).send({
+                    message: "Please select file to upload"
+                })
+            }
+
+            if (err) {
+                if (err.code == "LIMIT_FILE_SIZE") {
+                    return res.status(400).send({
+                        message: "Max file size 100 KB"
+                    })
+                }
+                return res.status(400).send(err)
+            }
+
+            return next()
+        })
+    }
+};
