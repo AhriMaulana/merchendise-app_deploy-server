@@ -1,12 +1,21 @@
 const { item } = require('../../models')
 
+const cloudinary = require('../utils/cloudinary');
+
 exports.addItem = async (req, res) => {
 
     try {
         const { ...data } = req.body
+
+        const result = await cloudinary.uploader.upload(req.file.path, {
+            folder: 'merchandise-app',
+            use_filename: true,
+            unique_filename: true,
+        });
+
         const createdItem = await item.create({
             ...data,
-            image : req.file.filename
+            image: result.public_id,
         })
         res.send({
             status: "success",
