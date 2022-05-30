@@ -5,7 +5,7 @@ const cloudinary = require('../utils/cloudinary');
 exports.addItem = async (req, res) => {
 
     try {
-        const { ...data } = req.body
+        const { namabarang, hargabeli, hargajual, stock } = req.body;
 
         const result = await cloudinary.uploader.upload(req.file.path, {
             folder: 'merchandise-app',
@@ -14,13 +14,16 @@ exports.addItem = async (req, res) => {
         });
 
         const createdItem = await item.create({
-            ...data,
             image: result.public_id,
+            namabarang,
+            hargabeli,
+            hargajual,
+            stock
         })
         res.send({
             status: "success",
             data: {
-                book: createdItem
+                item: createdItem
             }
         })
     } catch (error) {
