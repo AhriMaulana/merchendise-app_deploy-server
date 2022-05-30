@@ -111,7 +111,7 @@ exports.getItems = async (req, res) => {
         res.send({
             status: 'success',
             data: {
-                ...items,
+                items,
                 image: process.env.PATH_FILE + item.image,
             }
         })
