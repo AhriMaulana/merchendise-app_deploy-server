@@ -14,7 +14,7 @@ exports.addItem = async (req, res) => {
         });
 
         const createdItem = await item.create({
-            image: result.public_id,
+            image : result.public_id,
             namabarang,
             hargabeli,
             hargajual,
